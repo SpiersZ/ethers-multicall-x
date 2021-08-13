@@ -24,7 +24,8 @@ export class Contract {
     this._abi = toFragment(abi);
 
     this._functions = this._abi.filter(x => x.type === 'function').map(x => FunctionFragment.from(x));
-    const callFunctions = this._functions.filter(x => x.stateMutability === 'pure' || x.stateMutability === 'view');
+    // const callFunctions = this._functions.filter(x => x.stateMutability === 'pure' || x.stateMutability === 'view' || x.stateMutability === 'nonpayable');
+    const callFunctions = this._functions;
 
     for (const callFunction of callFunctions) {
       const { name } = callFunction;

@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { all } from './call';
+import { all, allSend } from './call';
 import { getEthBalance } from './calls';
 import { ContractCall } from './types';
 
@@ -29,6 +29,13 @@ export class Provider {
       throw new Error('Provider should be initialized before use.');
     }
     return all<T>(calls, this._multicallAddress, this._provider);
+  }
+
+  public async allSend<T extends any[] = any[]>(calls: ContractCall[]) {
+    if (!this._provider) {
+      throw new Error('Provider should be initialized before use.');
+    }
+    return allSend<T>(calls, this._multicallAddress, this._provider);
   }
 }
 

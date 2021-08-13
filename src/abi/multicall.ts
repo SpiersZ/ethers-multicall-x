@@ -1,6 +1,5 @@
 export const multicallAbi = [
   {
-    constant: true,
     inputs: [
       {
         components: [
@@ -34,7 +33,7 @@ export const multicallAbi = [
       },
     ],
     payable: false,
-    stateMutability: 'view',
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
