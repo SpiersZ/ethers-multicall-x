@@ -29,7 +29,7 @@ import { ContractCall } from './types';
 //   }
 //   return callResult;
 // }
-const MAX_CALLS = 200;
+const MAX_CALLS = 500;
 let callId = 0;
 const QData = {
   // call_0: {
@@ -38,8 +38,7 @@ const QData = {
     // timeDebounce: null,
     // lenArr: []
   // }
-}
-
+};
 
 export function all<T extends any[] = any[]>(
   calls: ContractCall[],
@@ -60,7 +59,7 @@ export function all<T extends any[] = any[]>(
     delete QData['call_' + callId];
     callId = callId + 1;
     QData['call_' + callId] = {
-      queryCalls: calls,
+      queryCalls: [],
       resolveList: [],
       timeDebounce: null,
       lenArr: []
@@ -121,7 +120,6 @@ export async function allSend<T extends any[] = any[]>(
       callData,
     };
   });
-  console.log('callRequests', callRequests);
   const tx = await multicall.aggregate(callRequests);
   await tx.wait()
   return true;
