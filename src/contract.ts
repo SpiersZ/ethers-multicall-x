@@ -24,6 +24,7 @@ export class Contract {
     this._abi = toFragment(abi);
 
     this._functions = this._abi.filter(x => x.type === 'function').map(x => FunctionFragment.from(x));
+    // tslint:disable-next-line:max-line-length
     // const callFunctions = this._functions.filter(x => x.stateMutability === 'pure' || x.stateMutability === 'view' || x.stateMutability === 'nonpayable');
     const callFunctions = this._functions;
 

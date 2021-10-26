@@ -31,6 +31,7 @@ import { ContractCall } from './types';
 // }
 const MAX_CALLS = 500;
 let callId = 0;
+// tslint:disable-next-line:variable-name
 const QData = {
   // call_0: {
     // queryCalls: [],
@@ -111,6 +112,7 @@ export async function allSend<T extends any[] = any[]>(
     calls: ContractCall[],
     multicallAddress: string,
     provider: ethers.providers.Provider,
+    // tslint:disable-next-line:ban-types
 ): Promise<Boolean> {
   const multicall = new ethers.Contract(multicallAddress, multicallAbi, provider);
   const callRequests = calls.map(call => {
@@ -121,6 +123,6 @@ export async function allSend<T extends any[] = any[]>(
     };
   });
   const tx = await multicall.aggregate(callRequests);
-  await tx.wait()
+  await tx.wait();
   return true;
 }
