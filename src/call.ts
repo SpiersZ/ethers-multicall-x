@@ -30,7 +30,7 @@ import { ContractCall } from './types';
 //   return callResult;
 // }
 const MAX_CALLS = 500;
-let callId = 0;
+const callId = {};
 // tslint:disable-next-line:variable-name
 const QData = {
   // call_0: {
@@ -44,10 +44,14 @@ const QData = {
 export function all<T extends any[] = any[]>(
   calls: ContractCall[],
   multicallAddress: string,
-  provider: ethers.providers.Provider,
+  provider: any,
 ): Promise<T> {
-  if (!QData['call_' + callId]) {
-    QData['call_' + callId] = {
+  const chainId = provider._network.chainId;
+  if (!callId[chainId]) {
+    callId[chainId] = 0;
+  }
+  if (!QData['call_' + callId[chainId] + chainId]) {
+    QData['call_' + callId[chainId] + chainId] = {
       queryCalls: [],
       resolveList: [],
       timeDebounce: null,
@@ -55,11 +59,12 @@ export function all<T extends any[] = any[]>(
     };
   }
   async function handleData() {
-    const {queryCalls, resolveList, timeDebounce, lenArr} = QData['call_' + callId];
+    const qKey = 'call_' + callId[chainId] + chainId;
+    const {queryCalls, resolveList, timeDebounce, lenArr} = QData[qKey];
     clearTimeout(timeDebounce);
-    delete QData['call_' + callId];
-    callId = callId + 1;
-    QData['call_' + callId] = {
+    delete QData[qKey];
+    callId[chainId] = callId[chainId] + 1;
+    QData[qKey] = {
       queryCalls: [],
       resolveList: [],
       timeDebounce: null,
@@ -89,17 +94,18 @@ export function all<T extends any[] = any[]>(
   }
 
   function debounce(resolve) {
-    QData['call_' + callId].queryCalls.push(...calls);
-    QData['call_' + callId].resolveList.push(resolve);
-    QData['call_' + callId].lenArr.push(calls.length);
-    clearTimeout(QData['call_' + callId].timeDebounce);
-    QData['call_' + callId].timeDebounce = setTimeout(async () => {
+    const qKey = 'call_' + callId[chainId] + chainId;
+    QData[qKey].queryCalls.push(...calls);
+    QData[qKey].resolveList.push(resolve);
+    QData[qKey].lenArr.push(calls.length);
+    clearTimeout(QData[qKey].timeDebounce);
+    QData[qKey].timeDebounce = setTimeout(async () => {
       await handleData();
     }, 100);
   }
 
   return new Promise(async (resolve, reject) => {
-    if (QData['call_' + callId].queryCalls.length + calls.length > MAX_CALLS) {
+    if (QData['call_' + callId[chainId] + chainId].queryCalls.length + calls.length > MAX_CALLS) {
       await handleData();
       debounce(resolve);
     } else {
