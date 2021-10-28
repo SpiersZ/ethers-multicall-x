@@ -2,6 +2,7 @@ import { ethers } from 'ethers';
 import { Abi } from './abi';
 import { multicallAbi } from './abi/multicall';
 import { ContractCall } from './types';
+import {processResult} from './utils';
 
 // export async function all<T extends any[] = any[]>(
 //   calls: ContractCall[],
@@ -89,7 +90,7 @@ export function all<T extends any[] = any[]>(
     }
     resolveList.map(resolve => {
       const data = callResult.splice(0, lenArr.shift());
-      resolve(data);
+      resolve(processResult(data));
     });
   }
 
